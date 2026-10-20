@@ -1,0 +1,14 @@
+import ContentPage from '@/components/ContentPage';
+import type { Metadata } from 'next';
+export const metadata: Metadata = { title: 'Terms & Conditions | Ampza' };
+export default function TermsPage(){return <ContentPage eyebrow="LAST UPDATED · 17 OCTOBER 2026" title="Terms & Conditions" intro="These terms apply when you use the Ampza website, app or charging stations. They sit alongside the Privacy Policy and Cancellation & Refund Policy." sections={[
+ {title:'Using Ampza',paragraphs:['You must be 18 or over and provide accurate details. Keep your OTP and phone secure; you are responsible for activity on your account.']},
+ {title:'Charging at our stations',paragraphs:['Use a compatible vehicle and connector, follow instructions at the site, and park in the charging bay only while charging. Do not damage or tamper with equipment; report damage or hazards. Auto Charge depends mainly on vehicle model compatibility. You are responsible for your vehicle and belongings.']},
+ {title:'Prices and payment',paragraphs:['You pay per kWh delivered. The price is shown in the app before you start, and applicable taxes are shown at billing. Price changes apply to sessions that start after the change. Payments are handled by third-party gateways.']},
+ {title:'Wallet',paragraphs:['Wallet balance is intended for Ampza charging, does not earn interest, cannot be withdrawn as cash or transferred to another user. Promotional credits are not refundable. See the refund policy for unused balances.']},
+ {title:'Availability and interrupted sessions',paragraphs:['Ampza works to keep stations running but cannot guarantee uninterrupted service. Sessions may stop because of power, station, vehicle or network issues. Billing and refunds are handled under the Cancellation & Refund Policy.']},
+ {title:'Acceptable use',paragraphs:['Do not use the service unlawfully, share accounts, use unauthorised payment methods, or attempt to copy, hack or disrupt Ampza systems.']},
+ {title:'Brand and responsibility',paragraphs:['Ampza’s name, logo, app, website and content are protected. The service is provided subject to applicable law. Nothing in these terms limits liability that cannot legally be limited or consumer rights under applicable law.']},
+ {title:'Partners, changes and governing law',paragraphs:['Host, franchise and fleet arrangements are covered by separate written agreements; website information about them is illustrative, not an offer or guarantee of returns. Ampza may update these terms and post a new date. These terms are governed by the laws of India, subject to consumer rights and applicable courts.']},
+ {title:'Contact',paragraphs:['Ampza, No. 10/44-2, Kovithanvilai Road, Erumbukadu Post, Nagercoil – 629004, Tamil Nadu, India. Email hello@ampza.in · Phone +91 98429 10644.']},
+]}/>}

@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model WebsiteSubmission {
+  id              BigInt   @id @default(autoincrement())
+  kind            String   @db.VarChar(20)
+  email           String   @db.VarChar(254)
+  normalizedEmail String?  @map("normalized_email") @db.VarChar(254)
+  payload         Json     @default("{}")
+  consent         Boolean  @default(false)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([kind, normalizedEmail], map: "website_waitlist_email_unique")
+  @@index([kind, createdAt(sort: Desc)], map: "website_submissions_kind_created_idx")
+  @@map("website_submissions")
+}

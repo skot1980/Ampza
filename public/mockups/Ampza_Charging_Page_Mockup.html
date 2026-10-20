@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ampza: Charging and the App</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root {
+  --ink: #1D1F21; --paper: #FAFAF8; --paper-dim: #F0EFEC;
+  --graphite: #8E9196; --graphite-light: #C7C9CC; --slate: #4A4D52;
+  --volt: #F5D949; --volt-deep: #D9BC2E; --line: #E3E2DE;
+  --display: 'Space Grotesk', sans-serif; --body: 'Inter', sans-serif; --mono: 'IBM Plex Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.5; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.01em; }
+button { font-family: var(--display); cursor: pointer; border: none; }
+.mono-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* NAV */
+header { position: sticky; top: 0; z-index: 200; background: rgba(250,250,248,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+nav.wrap { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; }
+.logo-mark { display: flex; align-items: center; gap: 10px; }
+.logo-mark .word { font-family: var(--display); font-weight: 700; font-size: 19px; }
+/* LOGO ANIMATION — panels slide in from opposite sides, bolt cracks to life like a real electric strike, flickers on hover */
+.logo-anim svg rect, .logo-anim svg path { transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .logo-anim svg rect:nth-of-type(1) { animation: ampza-panel-left 1s cubic-bezier(0.22,1,0.36,1) both; }
+  .logo-anim svg rect:nth-of-type(2) { animation: ampza-panel-right 1s cubic-bezier(0.22,1,0.36,1) both; }
+  .logo-anim svg path { animation: ampza-bolt-electric-strike 1.5s linear 0.7s both; }
+}
+.logo-anim:hover svg path { animation: ampza-bolt-flicker 2.4s linear infinite; }
+@keyframes ampza-panel-left {
+  0% { transform: translateX(-40px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes ampza-panel-right {
+  0% { transform: translateX(40px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+/* A real strike doesn't fade smoothly in — it stutters: flash, near-miss, flash again, then settle. */
+@keyframes ampza-bolt-electric-strike {
+  0%   { opacity: 0;   transform: scale(0.4); filter: drop-shadow(0 0 0 rgba(245,217,73,0)); }
+  6%   { opacity: 1;   transform: scale(1.4); filter: drop-shadow(0 0 12px rgba(245,217,73,1)) brightness(1.6); }
+  13%  { opacity: 0.15; transform: scale(0.9); filter: drop-shadow(0 0 0 rgba(245,217,73,0)); }
+  20%  { opacity: 1;   transform: scale(1.15); filter: drop-shadow(0 0 14px rgba(245,217,73,1)) brightness(1.7); }
+  28%  { opacity: 0.25; transform: scale(1); filter: drop-shadow(0 0 2px rgba(245,217,73,0.3)); }
+  36%  { opacity: 1;   filter: drop-shadow(0 0 10px rgba(245,217,73,0.9)) brightness(1.4); }
+  46%  { opacity: 0.5; filter: drop-shadow(0 0 2px rgba(245,217,73,0.3)); }
+  58%  { opacity: 1;   filter: drop-shadow(0 0 6px rgba(245,217,73,0.7)) brightness(1.15); }
+  100% { opacity: 1;   transform: scale(1); filter: drop-shadow(0 0 0 rgba(245,217,73,0)) brightness(1); }
+}
+/* Idle electric flicker on hover — irregular timing, like real arcing current, not a smooth pulse. */
+@keyframes ampza-bolt-flicker {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(245,217,73,0.9)) brightness(1.1); }
+  8%       { opacity: 0.35; filter: drop-shadow(0 0 1px rgba(245,217,73,0.2)) brightness(0.9); }
+  9%       { opacity: 1; filter: drop-shadow(0 0 8px rgba(245,217,73,1)) brightness(1.3); }
+  32%      { opacity: 1; }
+  33%      { opacity: 0.5; filter: drop-shadow(0 0 2px rgba(245,217,73,0.4)); }
+  35%      { opacity: 1; filter: drop-shadow(0 0 6px rgba(245,217,73,0.9)) brightness(1.1); }
+  63%      { opacity: 0.3; filter: drop-shadow(0 0 1px rgba(245,217,73,0.2)); }
+  65%      { opacity: 1; filter: drop-shadow(0 0 9px rgba(245,217,73,1)) brightness(1.3); }
+}
+.navlinks { display: flex; gap: 6px; align-items: center; }
+.navitem { position: relative; }
+.navitem > a { font-size: 14px; font-weight: 500; color: var(--slate); padding: 10px 14px; display: inline-block; }
+.navitem.active > a { color: var(--ink); }
+.navitem:hover .dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown {
+  position: absolute; top: 100%; left: 0; background: var(--ink); border-radius: 12px; padding: 10px;
+  min-width: 240px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: all 0.15s ease;
+  box-shadow: 0 20px 40px -12px rgba(0,0,0,0.25);
+}
+.dropdown a { display: flex; flex-direction: column; padding: 12px 14px; border-radius: 8px; }
+.dropdown a:hover { background: #2A2C2F; }
+.dropdown a .dtitle { color: var(--paper); font-size: 13.5px; font-weight: 600; }
+.dropdown a .ddesc { color: var(--graphite-light); font-size: 11.5px; margin-top: 2px; }
+.nav-cta { background: var(--ink); color: var(--paper); font-size: 13.5px; font-weight: 600; padding: 11px 20px; border-radius: 7px; }/* MEGA MENU (Fastned-style full-width panel, own design) */
+.navitem.has-mega:hover .megamenu { opacity: 1; visibility: visible; transform: translateY(0); }
+.megamenu {
+  position: fixed; top: 64px; left: 0; width: 100%;
+  background: var(--ink); border-top: 1px solid #303234; border-bottom: 1px solid #303234;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  box-shadow: 0 28px 56px -20px rgba(0,0,0,0.35); z-index: 150;
+}
+.megamenu .mm-inner {
+  max-width: 1180px; margin: 0 auto; padding: 40px 32px;
+  display: grid; grid-template-columns: 1fr 320px; gap: 48px;
+}
+.megamenu .mm-links { display: flex; flex-direction: column; gap: 2px; }
+.megamenu .mm-links a { padding: 13px 16px; border-radius: 8px; display: flex; flex-direction: column; }
+.megamenu .mm-links a:hover { background: #26282B; }
+.megamenu .mm-links a .dtitle { color: var(--paper); font-weight: 600; font-size: 14px; font-family: var(--display); }
+.megamenu .mm-links a .ddesc { color: var(--graphite-light); font-size: 12px; margin-top: 3px; }
+.megamenu .mm-promo {
+  background: linear-gradient(145deg, #26282B 0%, #1D1F21 100%); border: 1px solid #303234;
+  border-radius: 14px; padding: 26px; display: flex; flex-direction: column; justify-content: flex-end;
+  min-height: 200px; position: relative; overflow: hidden;
+}
+.megamenu .mm-promo::after {
+  content: ''; position: absolute; right: -34px; top: -34px; width: 150px; height: 150px;
+  background: var(--volt); opacity: 0.12; border-radius: 50%;
+}
+.megamenu .mm-promo .mm-label { font-family: var(--mono); font-size: 10px; color: var(--volt); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+.megamenu .mm-promo h4 { font-family: var(--display); font-size: 19px; color: var(--paper); margin-bottom: 16px; line-height: 1.25; }
+/* Nav links and CTA render immediately alongside the logo — no staggered reveal. */
+.megamenu .mm-promo a.mm-cta { align-self: flex-start; background: var(--volt); color: var(--ink); font-weight: 600; font-size: 13px; padding: 10px 18px; border-radius: 7px; }
+
+@media (max-width: 900px) {
+  .megamenu { position: static; display: none; }
+}
+
+/* HERO */
+.ch-hero { padding: 76px 0 60px; background: var(--ink); color: var(--paper); position: relative; overflow: hidden; }
+.ch-hero::after { content:''; position:absolute; right:-8%; top:-30%; width:420px; height:420px; background: var(--volt); opacity:0.08; border-radius:50%; }
+.ch-hero .mono-tag { color: var(--volt); }
+.ch-hero h1 { font-size: 46px; margin: 16px 0 16px; max-width: 640px; }
+.ch-hero p { color: var(--graphite-light); font-size: 16px; max-width: 520px; }
+
+/* SUB-NAV */
+.subnav { position: sticky; top: 65px; z-index: 90; background: var(--paper); border-bottom: 1px solid var(--line); }
+.subnav .wrap { display: flex; gap: 4px; padding: 0 32px; overflow-x: auto; }
+.subnav a { padding: 18px 20px; font-size: 13.5px; font-weight: 600; color: var(--slate); white-space: nowrap; border-bottom: 2px solid transparent; }
+.subnav a:hover { color: var(--ink); }
+.subnav a.current { color: var(--ink); border-bottom-color: var(--volt); }
+
+.track { padding: 88px 0; border-bottom: 1px solid var(--line); }
+.track:last-of-type { border-bottom: none; }
+.track-alt { background: var(--paper-dim); }
+.track-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; }
+.track .mono-tag { color: var(--volt-deep); }
+.track h2 { font-size: 32px; margin: 14px 0 16px; }
+.track .lead { font-size: 15.5px; color: var(--slate); margin-bottom: 28px; max-width: 480px; }
+.btn-primary { background: var(--volt); color: var(--ink); font-weight: 600; font-size: 14px; padding: 14px 24px; border-radius: 8px; display: inline-block; }
+.btn-ghost { background: transparent; border: 1.5px solid var(--ink); color: var(--ink); font-weight: 600; font-size: 14px; padding: 14px 24px; border-radius: 8px; display: inline-block; margin-left: 10px; }
+
+/* Phone mockup (reused) */
+.phone { width: 240px; height: 480px; background: var(--ink); border-radius: 32px; padding: 12px; margin: 0 auto; box-shadow: 0 30px 60px -20px rgba(29,31,33,0.35); }
+.phone-screen { width: 100%; height: 100%; background: var(--paper); border-radius: 20px; overflow: hidden; position: relative; }
+.phone-topbar { display: flex; justify-content: space-between; padding: 16px 18px 0; font-family: var(--mono); font-size: 9px; color: var(--slate); }
+.phone-map { height: 180px; background: linear-gradient(135deg, #EDEBE5, #E4E2DB); margin: 14px; border-radius: 14px; position: relative; }
+.phone-pin { position: absolute; width: 28px; height: 28px; background: var(--volt); border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); top: 42%; left: 42%; display:flex; align-items:center; justify-content:center; }
+.phone-pin span { transform: rotate(45deg); font-size: 11px; }
+.phone-card { margin: 0 14px 14px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 15px; }
+.phone-card .row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.phone-card .row .label { font-family: var(--mono); font-size: 9px; color: var(--graphite-light); }
+.phone-card .row .val { font-family: var(--mono); font-size: 12px; color: var(--volt); }
+
+.step-list { display: flex; flex-direction: column; }
+.step-item { display: grid; grid-template-columns: 32px 1fr; gap: 16px; padding: 16px 0; border-top: 1px solid var(--line); }
+.step-item:first-child { border-top: none; }
+.step-item .n { font-family: var(--mono); font-size: 12px; color: var(--volt-deep); }
+.step-item h4 { font-size: 14.5px; margin-bottom: 4px; }
+.step-item p { font-size: 13px; color: var(--slate); }
+
+/* Connector grid */
+.conn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.conn-card { border: 1px solid var(--line); border-radius: 12px; padding: 22px; background: var(--paper); }
+.conn-card .badge { font-family: var(--mono); font-size: 11px; color: var(--ink); background: var(--volt); display: inline-block; padding: 4px 10px; border-radius: 5px; margin-bottom: 14px; }
+.conn-card h4 { font-size: 15px; margin-bottom: 6px; }
+.conn-card p { font-size: 12.5px; color: var(--slate); }
+
+/* FAQ */
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-top: 1px solid var(--line); padding: 22px 0; }
+.faq-item:first-child { border-top: none; }
+.faq-item h4 { font-size: 15.5px; margin-bottom: 8px; }
+.faq-item p { font-size: 13.5px; color: var(--slate); max-width: 640px; }
+
+/* AUTO CHARGE */
+.auto-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 40px 0 56px; }
+.auto-step { text-align: center; padding: 26px 18px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; position: relative; }
+.auto-step .an { font-family: var(--mono); font-size: 11px; color: var(--volt-deep); margin-bottom: 14px; }
+.auto-step .aicon { width: 44px; height: 44px; border-radius: 10px; background: var(--ink); color: var(--volt); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 18px; }
+.auto-step h4 { font-size: 14.5px; margin-bottom: 6px; }
+.auto-step p { font-size: 12px; color: var(--slate); }
+.auto-why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.auto-why-item { display: flex; align-items: center; gap: 10px; padding: 16px 18px; background: var(--paper-dim); border-radius: 10px; font-size: 13.5px; font-weight: 500; }
+.auto-why-item .check { color: var(--volt-deep); font-weight: 700; }
+.auto-badge-note { display: flex; align-items: center; gap: 10px; margin-top: 32px; padding: 16px 20px; background: var(--paper-dim); border-radius: 10px; font-size: 13px; color: var(--slate); }
+
+/* SAVINGS CALCULATOR */
+.calc-panel { background: var(--ink); border-radius: 16px; padding: 40px; color: var(--paper); }
+.calc-panel h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--volt); margin-bottom: 24px; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+.calc-inputs .field { margin-bottom: 22px; }
+.calc-inputs label { display: flex; justify-content: space-between; font-size: 13px; color: var(--graphite-light); margin-bottom: 8px; }
+.calc-inputs label .fval { font-family: var(--mono); color: var(--volt); font-size: 13px; }
+.calc-inputs input[type="range"] { width: 100%; accent-color: var(--volt); }
+.calc-results { display: flex; flex-direction: column; gap: 14px; }
+.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-top: 1px solid #303234; }
+.result-row:first-child { border-top: none; }
+.result-row .rl { font-size: 12.5px; color: var(--graphite-light); }
+.result-row .rv { font-family: var(--display); font-weight: 700; font-size: 17px; color: var(--paper); }
+.result-row.highlight .rv { color: var(--volt); font-size: 22px; }
+.calc-disclaimer { font-size: 11.5px; color: var(--graphite); margin-top: 20px; }
+
+.cta-strip { background: var(--slate); color: var(--paper); padding: 64px 0; text-align: center; }
+.cta-strip h2 { font-size: 28px; margin-bottom: 12px; color: var(--paper); }
+.cta-strip p { color: var(--graphite-light); margin-bottom: 26px; font-size: 15px; }
+
+footer { padding: 44px 0; }
+.footer-bottom { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--graphite); }
+
+@media (max-width: 900px) {
+  .track-grid, .conn-grid { grid-template-columns: 1fr; }
+  .navlinks { display: none; }
+  .ch-hero h1 { font-size: 32px; }
+}
+.plan-tag { display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); background:var(--volt); padding:3px 8px; border-radius:4px; margin-right:8px; }
+.plan-tag.later { background:transparent; color:var(--slate); border:1px solid var(--graphite); }
+.status-row { margin-top:28px; display:flex; flex-direction:column; gap:10px; font-size:13px; color:var(--slate); }
+.concept-note { margin-top:16px; font-size:12px; color:var(--graphite); }
+#rfid { border-bottom:1px solid var(--line); }
+
+/* ===== Shared: footer, TBC markers, page furniture (added for gateway/go-live pages) ===== */
+.site-footer { background: var(--ink); color: var(--graphite-light); padding: 64px 0 28px; margin-top: 0; }
+.site-footer .sf-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1.1fr; gap: 36px; }
+.site-footer .sf-brand .logo-mark { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.site-footer .sf-brand .word { font-family: var(--display); font-weight:700; font-size:19px; color: var(--paper); }
+.site-footer .sf-desc { font-size: 13px; color: var(--graphite-light); max-width: 300px; margin-bottom: 18px; }
+.site-footer .sf-contact { font-size: 12.5px; line-height: 1.7; color: var(--graphite-light); }
+.site-footer .sf-contact a { color: var(--paper); }
+.site-footer h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--volt); margin-bottom: 14px; font-weight: 500; }
+.site-footer .sf-col a { display:block; font-size: 13.5px; color: var(--graphite-light); padding: 4px 0; }
+.site-footer .sf-col a:hover { color: var(--volt); }
+.site-footer .sf-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid #34373B; display:flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--graphite); }
+.site-footer .sf-bottom a { color: var(--graphite-light); margin-left: 18px; }
+.site-footer .sf-bottom a:hover { color: var(--volt); }
+@media (max-width: 960px) { .site-footer .sf-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .site-footer .sf-grid { grid-template-columns: 1fr; } .site-footer .sf-bottom a:first-child { margin-left:0; } }
+/* TBC marker: highlights placeholder content the team must replace before launch */
+.tbc { background: rgba(245,217,73,0.35); border-bottom: 1.5px dashed var(--volt-deep); padding: 0 3px; border-radius: 3px; font-style: normal; }
+
+/* Buttons for the new forms/CTAs (scoped so existing page buttons are untouched) */
+.biz-hero .btn-primary, #partner-enquiry .btn-primary, .pg-hero .btn-primary, .sec .btn-primary, .btn-row .btn-primary, .ef .btn-primary, .callout .btn-primary { background: var(--volt); color: var(--ink); font-weight: 600; font-size: 14px; padding: 14px 24px; border-radius: 8px; display: inline-block; }
+.biz-hero .btn-primary:hover, #partner-enquiry .btn-primary:hover, .sec .btn-primary:hover, .ef .btn-primary:hover { background: var(--volt-deep); }
+
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="Ampza_Homepage_Mockup.html" class="logo-mark logo-anim">
+      <svg width="30" height="30" viewBox="10 10 70 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="16" y="14" width="26" height="62" rx="7" fill="#8E9196"/>
+        <rect x="48" y="14" width="26" height="62" rx="7" fill="#F5D949"/>
+        <path d="M49 16 L33 46 H43 L40 74 L60 43 H49 Z" fill="#1D1F21"/>
+      </svg>
+      <span class="word">Ampza</span>
+    </a>
+    <div class="navlinks">
+      <div class="navitem has-mega active">
+        <a href="Ampza_Charging_Page_Mockup.html">Charging</a>
+        <div class="megamenu">
+          <div class="mm-inner">
+            <div class="mm-links">
+              <a href="Ampza_Charging_Page_Mockup.html#app"><span class="dtitle">The App</span><span class="ddesc">Find, charge, and track sessions</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#howto"><span class="dtitle">How to Charge</span><span class="ddesc">Step-by-step at any station</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#autocharge"><span class="dtitle">Auto Charge</span><span class="ddesc">Plug in and charging starts itself</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#connectors"><span class="dtitle">Connector Types</span><span class="ddesc">What hardware we support</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#savings"><span class="dtitle">Savings Calculator</span><span class="ddesc">Petrol vs. EV cost comparison</span></a>
+              <a href="Ampza_FAQs_Page_Mockup.html"><span class="dtitle">FAQs &amp; Support</span><span class="ddesc">Payments, refunds, if a charge fails</span></a>
+            </div>
+            <div class="mm-promo">
+              <span class="mm-label">New here?</span>
+              <h4>Get charging instructions, start to finish.</h4>
+              <a href="Ampza_Charging_Page_Mockup.html#howto" class="mm-cta">Show me →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navitem has-mega">
+        <a href="Ampza_Business_Page_Mockup.html">Business</a>
+        <div class="megamenu">
+          <div class="mm-inner">
+            <div class="mm-links">
+              <a href="Ampza_Business_Page_Mockup.html#host"><span class="dtitle">Host a Station</span><span class="ddesc">Bring charging to your property</span></a>
+              <a href="Ampza_Business_Page_Mockup.html#franchise"><span class="dtitle">Franchise With Us</span><span class="ddesc">Run an Ampza charging point</span></a>
+              <a href="Ampza_Business_Page_Mockup.html#byoc"><span class="dtitle">Bring Your Own Charger</span><span class="ddesc">List existing hardware on our app</span></a>
+              <a href="Ampza_Business_Page_Mockup.html#fleet"><span class="dtitle">Fleet & Corporate</span><span class="ddesc">Charging plans for company vehicles</span></a>
+            </div>
+            <div class="mm-promo">
+              <span class="mm-label">Have a property?</span>
+              <h4>Let's put an Ampza charger on it.</h4>
+              <a href="Ampza_Business_Page_Mockup.html#host" class="mm-cta">Start hosting →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navitem"><a href="Ampza_Pricing_Page_Mockup.html">Pricing</a></div>
+      <div class="navitem has-mega">
+        <a href="Ampza_About_Page_Mockup.html">About</a>
+        <div class="megamenu">
+          <div class="mm-inner">
+            <div class="mm-links">
+              <a href="Ampza_About_Page_Mockup.html#mission"><span class="dtitle">Mission & Vision</span><span class="ddesc">Why we're building Ampza</span></a>
+              <a href="Ampza_About_Page_Mockup.html#values"><span class="dtitle">Values</span><span class="ddesc">What we build around</span></a>
+              <a href="Ampza_About_Page_Mockup.html#story"><span class="dtitle">Our Story</span><span class="ddesc">Early days, on purpose</span></a>
+              <a href="Ampza_About_Page_Mockup.html#investors"><span class="dtitle">For Investors</span><span class="ddesc">Where things stand today</span></a>
+              <a href="Ampza_Contact_Page_Mockup.html"><span class="dtitle">Contact</span><span class="ddesc">Support, partnerships, grievance form</span></a>
+            </div>
+            <div class="mm-promo">
+              <span class="mm-label">Our mission</span>
+              <h4>Charging, for people. Not just for cars.</h4>
+              <a href="Ampza_About_Page_Mockup.html#mission" class="mm-cta">Read our story →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="Ampza_Homepage_Mockup.html#waitlist" class="nav-cta">Join waitlist</a>
+  </nav>
+</header>
+
+<section class="ch-hero">
+  <div class="wrap">
+    <span class="mono-tag">// Charging</span>
+    <h1>Everything the app is planned to do, before it's even built.</h1>
+    <p>How Ampza is designed to work at launch, from finding a station to understanding what hardware we support.</p>
+  </div>
+</section>
+
+<div class="subnav">
+  <div class="wrap">
+    <a href="#app" class="current">The App</a>
+    <a href="#howto">How to Charge</a>
+    <a href="#autocharge">Auto Charge</a>
+    <a href="#rfid">RFID</a>
+    <a href="#connectors">Connector Types</a>
+    <a href="#savings">Savings Calculator</a>
+    <a href="#faq">FAQ</a>
+  </div>
+</div>
+
+<!-- THE APP -->
+<section class="track wrap" id="app">
+  <div class="track-grid">
+    <div>
+      <span class="mono-tag">01. Overview</span>
+      <h2>One app, from search to session.</h2>
+      <p class="lead">The Ampza app, which is yet to be built, is planned around the moments that frustrate EV drivers: finding a working charger, knowing the price, starting a session and tracking the charge.</p>
+      <div>
+        <a href="Ampza_Homepage_Mockup.html#waitlist" class="btn-primary">Join the waitlist</a>
+      </div>
+      <div class="status-row">
+        <div><span class="plan-tag">Planned for launch</span> Find · AmpTap · Track · Auto Charge</div>
+        <div><span class="plan-tag later">Planned after launch</span> Ampza RFID card</div>
+      </div>
+      <p class="concept-note">App screens on this page are concept designs. The app is yet to be built.</p>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-topbar"><span>9:41</span><span>AMPZA</span></div>
+        <div class="phone-map"><div class="phone-pin"><span>⚡</span></div></div>
+        <div class="phone-card">
+          <div class="row"><span class="label">CONNECTOR</span><span class="val">CCS2</span></div>
+          <div class="row"><span class="label">RATE</span><span class="val">₹20/kWh</span></div>
+          <div class="row"><span class="label">STATUS</span><span class="val">AVAILABLE</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO CHARGE -->
+<section class="track track-alt" id="howto">
+  <div class="wrap track-grid">
+    <div>
+      <span class="mono-tag">02. Walkthrough</span>
+      <h2>How to Charge</h2>
+      <p class="lead">Honestly? It's this simple: <strong style="color:var(--ink);">pick a station, AmpTap to start, plug in.</strong> Everything below is just the detail, in case you want it.</p>
+      <div class="step-list">
+        <div class="step-item"><div class="n">1</div><div><h4>Open the app and pick a station</h4><p>Filter by connector type, price, or distance.</p></div></div>
+        <div class="step-item"><div class="n">2</div><div><h4>AmpTap to connect</h4><p>Tap your phone at the charger. No separate RFID card required at launch.</p></div></div>
+        <div class="step-item"><div class="n">3</div><div><h4>Plug in</h4><p>The session starts automatically once connected.</p></div></div>
+        <div class="step-item"><div class="n">4</div><div><h4>Track and stop anytime</h4><p>Watch live cost and speed; end the session from your phone.</p></div></div>
+      </div>
+    </div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="phone-topbar"><span>9:41</span><span>AMPZA</span></div>
+        <div style="padding:60px 20px; text-align:center;">
+          <div style="font-family:var(--mono); font-size:11px; color:var(--slate); margin-bottom:10px;">SESSION ACTIVE</div>
+          <div style="font-family:var(--display); font-weight:700; font-size:34px; margin-bottom:6px;">42%</div>
+          <div style="font-family:var(--mono); font-size:11px; color:var(--slate);">18 MIN REMAINING</div>
+        </div>
+        <div class="phone-card" style="margin-top:20px;">
+          <div class="row"><span class="label">COST SO FAR</span><span class="val">₹142</span></div>
+          <div class="row"><span class="label">SPEED</span><span class="val">32 kW</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTO CHARGE -->
+<section class="track track-alt" id="autocharge">
+  <div class="wrap">
+    <span class="mono-tag">03. Planned for Launch</span>
+    <h2 style="margin:14px 0 16px;">Auto Charge: plug in, that's it</h2>
+    <p class="lead">Plug in and charging can start on its own for compatible vehicles. Auto Charge depends primarily on your vehicle model, so check that your car is supported and activate the feature if required.</p>
+
+    <div class="auto-flow">
+      <div class="auto-step">
+        <div class="an">STEP 1</div>
+        <div class="aicon">🚗</div>
+        <h4>Vehicle Identification</h4>
+        <p>Smart recognition the moment you plug in.</p>
+      </div>
+      <div class="auto-step">
+        <div class="an">STEP 2</div>
+        <div class="aicon">🔒</div>
+        <h4>Automatic Authentication</h4>
+        <p>Your account is verified in the background, instantly.</p>
+      </div>
+      <div class="auto-step">
+        <div class="an">STEP 3</div>
+        <div class="aicon">⚡</div>
+        <h4>Instant Charging</h4>
+        <p>Power starts flowing. No extra step needed.</p>
+      </div>
+      <div class="auto-step">
+        <div class="an">STEP 4</div>
+        <div class="aicon">✓</div>
+        <h4>Session Completion</h4>
+        <p>Unplug when you're done. Billing closes automatically.</p>
+      </div>
+    </div>
+
+    <span class="mono-tag">Why it matters</span>
+    <div class="auto-why" style="margin-top:16px;">
+      <div class="auto-why-item"><span class="check">✓</span> Instant access</div>
+      <div class="auto-why-item"><span class="check">✓</span> Secure authentication</div>
+      <div class="auto-why-item"><span class="check">✓</span> Automatic payments</div>
+      <div class="auto-why-item"><span class="check">✓</span> Time-saving convenience</div>
+    </div>
+
+    <div class="auto-badge-note">
+      <span>💡</span>
+      <span>Auto Charge depends primarily on vehicle-model compatibility. Check that your car model is supported and activate the feature if required. Station or network capability may also affect availability. Compatibility is not determined by the station alone.</span>
+    </div>
+  </div>
+</section>
+
+<!-- RFID -->
+<section class="track wrap" id="rfid">
+  <span class="mono-tag">04. Planned After Launch</span>
+  <h2>RFID: tap a card, charge</h2>
+  <p class="lead">An optional Ampza RFID card, linked to your account, starts a session with a single tap and no app needed at the charger. It still works when your phone has little signal, and cards can be assigned to family members or fleet drivers.</p>
+  <span class="plan-tag later">Planned after launch</span>
+</section>
+
+<!-- CONNECTOR TYPES -->
+<section class="track wrap" id="connectors">
+  <span class="mono-tag">05. Compatibility</span>
+  <h2 style="margin:14px 0 16px;">Connector Types</h2>
+  <p class="lead">Our launch stations are built around the most common standards in India. More will be added as the network grows.</p>
+  <div class="conn-grid">
+    <div class="conn-card"><div class="badge">DC FAST</div><h4>CCS2</h4><p>The standard connector for most new electric cars and SUVs sold in India.</p></div>
+    <div class="conn-card"><div class="badge">AC</div><h4>Type 2</h4><p>Slower AC charging, suited for longer parking stops: malls, hotels, offices.</p></div>
+    <div class="conn-card"><div class="badge">DC FAST</div><h4>CHAdeMO</h4><p>Supported at select stations for compatible vehicle models.</p></div>
+  </div>
+</section>
+
+<!-- SAVINGS CALCULATOR -->
+<section class="track wrap" id="savings">
+  <span class="mono-tag">06. Cost Comparison</span>
+  <h2 style="margin:14px 0 16px;">See what switching could save you</h2>
+  <p class="lead">A rough, illustrative comparison between fuel and EV charging costs for your driving. Adjust the sliders to match your commute.</p>
+
+  <div class="calc-panel">
+    <h4>// Petrol vs. EV Charging Calculator</h4>
+    <div class="calc-grid">
+      <div class="calc-inputs">
+        <div class="field">
+          <label>Distance driven per day (km) <span class="fval" id="v-dist">40</span></label>
+          <input type="range" id="in-dist" min="5" max="200" value="40" step="5">
+        </div>
+        <div class="field">
+          <label>Petrol price (₹/litre) <span class="fval" id="v-petrol">105</span></label>
+          <input type="range" id="in-petrol" min="80" max="130" value="105" step="1">
+        </div>
+        <div class="field">
+          <label>Car mileage (km/litre) <span class="fval" id="v-mileage">15</span></label>
+          <input type="range" id="in-mileage" min="8" max="25" value="15" step="1">
+        </div>
+        <div class="field">
+          <label>Ampza charging rate (₹/kWh) <span class="fval" id="v-evrate">20</span></label>
+          <input type="range" id="in-evrate" min="10" max="26" value="20" step="0.5">
+        </div>
+        <div class="field">
+          <label>EV efficiency (km/kWh) <span class="fval" id="v-eff">6</span></label>
+          <input type="range" id="in-eff" min="4" max="10" value="6" step="0.5">
+        </div>
+      </div>
+      <div class="calc-results">
+        <div class="result-row"><span class="rl">Monthly petrol cost</span><span class="rv" id="out-petrolcost">-</span></div>
+        <div class="result-row"><span class="rl">Monthly Ampza charging cost</span><span class="rv" id="out-evcost">-</span></div>
+        <div class="result-row highlight"><span class="rl">Estimated monthly savings</span><span class="rv" id="out-savings">-</span></div>
+        <div class="result-row"><span class="rl">Estimated annual savings</span><span class="rv" id="out-savingsyr">-</span></div>
+      </div>
+    </div>
+    <p class="calc-disclaimer">⚠️ Illustrative only. Actual savings depend on your vehicle's real efficiency, driving conditions, and local fuel/electricity prices.</p>
+  </div>
+
+  <script>
+    (function() {
+      const ids = ['dist','petrol','mileage','evrate','eff'];
+      const inputs = {}; const labels = {};
+      ids.forEach(id => {
+        inputs[id] = document.getElementById('in-' + id);
+        labels[id] = document.getElementById('v-' + id);
+      });
+      function calc() {
+        const dist = parseFloat(inputs.dist.value);
+        const petrolPrice = parseFloat(inputs.petrol.value);
+        const mileage = parseFloat(inputs.mileage.value);
+        const evRate = parseFloat(inputs.evrate.value);
+        const eff = parseFloat(inputs.eff.value);
+
+        labels.dist.textContent = dist;
+        labels.petrol.textContent = petrolPrice;
+        labels.mileage.textContent = mileage;
+        labels.evrate.textContent = evRate.toFixed(1);
+        labels.eff.textContent = eff.toFixed(1);
+
+        const dailyPetrolCost = (dist / mileage) * petrolPrice;
+        const dailyEvCost = (dist / eff) * evRate;
+        const monthlyPetrol = dailyPetrolCost * 30;
+        const monthlyEv = dailyEvCost * 30;
+        const monthlySavings = monthlyPetrol - monthlyEv;
+        const annualSavings = monthlySavings * 12;
+
+        document.getElementById('out-petrolcost').textContent = '₹' + Math.round(monthlyPetrol).toLocaleString();
+        document.getElementById('out-evcost').textContent = '₹' + Math.round(monthlyEv).toLocaleString();
+        document.getElementById('out-savings').textContent = '₹' + Math.round(monthlySavings).toLocaleString();
+        document.getElementById('out-savingsyr').textContent = '₹' + Math.round(annualSavings).toLocaleString();
+      }
+      ids.forEach(id => inputs[id].addEventListener('input', calc));
+      calc();
+    })();
+  </script>
+</section>
+
+<!-- FAQ -->
+<section class="track track-alt" id="faq">
+  <div class="wrap">
+    <span class="mono-tag">07. Questions</span>
+    <h2 style="margin:14px 0 16px;">Frequently Asked</h2>
+    <div class="faq-list">
+      <div class="faq-item"><h4>How is pricing calculated?</h4><p>You pay per kWh consumed, shown upfront on the app before you start charging. No separate connection or idle fees at launch.</p></div>
+      <div class="faq-item"><h4>Do I need a separate RFID card?</h4><p>No RFID card is needed at launch. AmpTap lets you start a session by tapping your phone. An optional Ampza RFID card is planned after launch: tap a card to start a session with no app needed at the charger, even when your phone has little signal.</p></div>
+      <div class="faq-item"><h4>What if a station is unavailable when I arrive?</h4><p>Live status is shown in the app, so you'll know before you leave. We're working on live occupancy updates as the network grows.</p></div>
+      <div class="faq-item"><h4>How do I get support during a charging session?</h4><p>In-app chat connects you directly to our support team. During our early launch phase, that's a small, responsive team, not a call queue.</p></div>
+    
+    </div>
+    <p style="margin-top:28px;"><a href="Ampza_FAQs_Page_Mockup.html" class="btn-secondary" style="border-bottom:1.5px solid var(--volt); font-weight:600; font-size:14px;">See all FAQs, payments and refunds →</a></p>
+  </div>
+</section>
+
+<div class="cta-strip">
+  <div class="wrap">
+    <h2>Be the first to try it.</h2>
+    <p>Join the waitlist and we'll notify you the moment Ampza launches near you.</p>
+    <a href="Ampza_Homepage_Mockup.html#waitlist" class="btn-primary">Join the waitlist</a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="sf-grid">
+      <div class="sf-brand">
+        <a href="Ampza_Homepage_Mockup.html" class="logo-mark"><svg width="30" height="30" viewBox="10 10 70 70" xmlns="http://www.w3.org/2000/svg">
+          <rect x="16" y="14" width="26" height="62" rx="7" fill="#8E9196"/>
+          <rect x="48" y="14" width="26" height="62" rx="7" fill="#F5D949"/>
+          <path d="M49 16 L33 46 H43 L40 74 L60 43 H49 Z" fill="#1D1F21"/>
+        </svg><span class="word">Ampza</span></a>
+        <p class="sf-desc">Charging, for people. Not just for cars. EV charging for Tamil Nadu and Kerala, built on reliability.</p>
+        <div class="sf-contact">
+          <strong style="color:var(--paper);">Ampza</strong><br>
+          No. 10/44-2, Kovithanvilai Road, Erumbukadu Post, Nagercoil – 629004, Tamil Nadu, India<br>
+          Phone: <a href="tel:+919842910644">+91-9842910644</a><br>
+          Support: <a href="mailto:support@ampza.in">support@ampza.in</a><br>
+          General &amp; business: <a href="mailto:hello@ampza.in">hello@ampza.in</a>
+        </div>
+      </div>
+      <div class="sf-col">
+        <h4>Charging</h4>
+        <a href="Ampza_Charging_Page_Mockup.html#app">The app</a>
+        <a href="Ampza_Charging_Page_Mockup.html#howto">How to charge</a>
+        <a href="Ampza_Pricing_Page_Mockup.html">Pricing</a>
+        <a href="Ampza_FAQs_Page_Mockup.html">FAQs</a>
+      </div>
+      <div class="sf-col">
+        <h4>Business</h4>
+        <a href="Ampza_Business_Page_Mockup.html#partner-enquiry">Partner with us</a>
+        <a href="Ampza_Business_Page_Mockup.html#host">Host a station</a>
+        <a href="Ampza_Business_Page_Mockup.html#franchise">Franchise</a>
+        <a href="Ampza_Business_Page_Mockup.html#byoc">Bring your own charger</a>
+        <a href="Ampza_Business_Page_Mockup.html#fleet">Fleet &amp; corporate</a>
+      </div>
+      <div class="sf-col">
+        <h4>Company</h4>
+        <a href="Ampza_About_Page_Mockup.html">About us</a>
+        <a href="Ampza_Contact_Page_Mockup.html">Contact us</a>
+        <a href="Ampza_Contact_Page_Mockup.html#support">Support</a>
+        <a href="Ampza_Contact_Page_Mockup.html#grievance">Grievance form</a>
+      </div>
+      <div class="sf-col">
+        <h4>Legal</h4>
+        <a href="Ampza_Privacy_Policy_Mockup.html">Privacy Policy</a>
+        <a href="Ampza_Terms_and_Conditions_Mockup.html">Terms &amp; Conditions</a>
+        <a href="Ampza_Cancellation_and_Refund_Policy_Mockup.html">Cancellation &amp; Refund Policy</a>
+        <a href="Ampza_Cookie_Policy_Mockup.html">Cookie Policy</a>
+      </div>
+    </div>
+    <div class="sf-bottom">
+      <span>© 2026 Ampza. All rights reserved.</span>
+      <span><a href="Ampza_Privacy_Policy_Mockup.html">Privacy Policy</a><a href="Ampza_Terms_and_Conditions_Mockup.html">Terms &amp; Conditions</a><a href="Ampza_Cancellation_and_Refund_Policy_Mockup.html">Cancellation &amp; Refund Policy</a><a href="Ampza_Cookie_Policy_Mockup.html">Cookies</a><a href="Ampza_Contact_Page_Mockup.html">Contact</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

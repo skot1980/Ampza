@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ampza: About</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root {
+  --ink: #1D1F21; --paper: #FAFAF8; --paper-dim: #F0EFEC;
+  --graphite: #8E9196; --graphite-light: #C7C9CC; --slate: #4A4D52;
+  --volt: #F5D949; --volt-deep: #D9BC2E; --line: #E3E2DE;
+  --display: 'Space Grotesk', sans-serif; --body: 'Inter', sans-serif; --mono: 'IBM Plex Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.5; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.01em; }
+.mono-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+header { position: sticky; top: 0; z-index: 200; background: rgba(250,250,248,0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+nav.wrap { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; }
+.logo-mark { display: flex; align-items: center; gap: 10px; }
+.logo-mark .word { font-family: var(--display); font-weight: 700; font-size: 19px; }
+/* LOGO ANIMATION — panels slide in from opposite sides, bolt cracks to life like a real electric strike, flickers on hover */
+.logo-anim svg rect, .logo-anim svg path { transform-box: fill-box; transform-origin: center; }
+@media (prefers-reduced-motion: no-preference) {
+  .logo-anim svg rect:nth-of-type(1) { animation: ampza-panel-left 1s cubic-bezier(0.22,1,0.36,1) both; }
+  .logo-anim svg rect:nth-of-type(2) { animation: ampza-panel-right 1s cubic-bezier(0.22,1,0.36,1) both; }
+  .logo-anim svg path { animation: ampza-bolt-electric-strike 1.5s linear 0.7s both; }
+}
+.logo-anim:hover svg path { animation: ampza-bolt-flicker 2.4s linear infinite; }
+@keyframes ampza-panel-left {
+  0% { transform: translateX(-40px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes ampza-panel-right {
+  0% { transform: translateX(40px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+/* A real strike doesn't fade smoothly in — it stutters: flash, near-miss, flash again, then settle. */
+@keyframes ampza-bolt-electric-strike {
+  0%   { opacity: 0;   transform: scale(0.4); filter: drop-shadow(0 0 0 rgba(245,217,73,0)); }
+  6%   { opacity: 1;   transform: scale(1.4); filter: drop-shadow(0 0 12px rgba(245,217,73,1)) brightness(1.6); }
+  13%  { opacity: 0.15; transform: scale(0.9); filter: drop-shadow(0 0 0 rgba(245,217,73,0)); }
+  20%  { opacity: 1;   transform: scale(1.15); filter: drop-shadow(0 0 14px rgba(245,217,73,1)) brightness(1.7); }
+  28%  { opacity: 0.25; transform: scale(1); filter: drop-shadow(0 0 2px rgba(245,217,73,0.3)); }
+  36%  { opacity: 1;   filter: drop-shadow(0 0 10px rgba(245,217,73,0.9)) brightness(1.4); }
+  46%  { opacity: 0.5; filter: drop-shadow(0 0 2px rgba(245,217,73,0.3)); }
+  58%  { opacity: 1;   filter: drop-shadow(0 0 6px rgba(245,217,73,0.7)) brightness(1.15); }
+  100% { opacity: 1;   transform: scale(1); filter: drop-shadow(0 0 0 rgba(245,217,73,0)) brightness(1); }
+}
+/* Idle electric flicker on hover — irregular timing, like real arcing current, not a smooth pulse. */
+@keyframes ampza-bolt-flicker {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px rgba(245,217,73,0.9)) brightness(1.1); }
+  8%       { opacity: 0.35; filter: drop-shadow(0 0 1px rgba(245,217,73,0.2)) brightness(0.9); }
+  9%       { opacity: 1; filter: drop-shadow(0 0 8px rgba(245,217,73,1)) brightness(1.3); }
+  32%      { opacity: 1; }
+  33%      { opacity: 0.5; filter: drop-shadow(0 0 2px rgba(245,217,73,0.4)); }
+  35%      { opacity: 1; filter: drop-shadow(0 0 6px rgba(245,217,73,0.9)) brightness(1.1); }
+  63%      { opacity: 0.3; filter: drop-shadow(0 0 1px rgba(245,217,73,0.2)); }
+  65%      { opacity: 1; filter: drop-shadow(0 0 9px rgba(245,217,73,1)) brightness(1.3); }
+}
+.navlinks { display: flex; gap: 6px; align-items: center; }
+.navitem { position: relative; }
+.navitem > a { font-size: 14px; font-weight: 500; color: var(--slate); padding: 10px 14px; display: inline-block; }
+.navitem.active > a { color: var(--ink); }
+.navitem:hover .dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown { position: absolute; top: 100%; left: 0; background: var(--ink); border-radius: 12px; padding: 10px; min-width: 240px; opacity: 0; visibility: hidden; transform: translateY(6px); transition: all 0.15s ease; box-shadow: 0 20px 40px -12px rgba(0,0,0,0.25); }
+.dropdown a { display: flex; flex-direction: column; padding: 12px 14px; border-radius: 8px; }
+.dropdown a:hover { background: #2A2C2F; }
+.dropdown a .dtitle { color: var(--paper); font-size: 13.5px; font-weight: 600; }
+.dropdown a .ddesc { color: var(--graphite-light); font-size: 11.5px; margin-top: 2px; }
+.nav-cta { background: var(--ink); color: var(--paper); font-size: 13.5px; font-weight: 600; padding: 11px 20px; border-radius: 7px; }/* MEGA MENU (Fastned-style full-width panel, own design) */
+.navitem.has-mega:hover .megamenu { opacity: 1; visibility: visible; transform: translateY(0); }
+.megamenu {
+  position: fixed; top: 64px; left: 0; width: 100%;
+  background: var(--ink); border-top: 1px solid #303234; border-bottom: 1px solid #303234;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  box-shadow: 0 28px 56px -20px rgba(0,0,0,0.35); z-index: 150;
+}
+.megamenu .mm-inner {
+  max-width: 1180px; margin: 0 auto; padding: 40px 32px;
+  display: grid; grid-template-columns: 1fr 320px; gap: 48px;
+}
+.megamenu .mm-links { display: flex; flex-direction: column; gap: 2px; }
+.megamenu .mm-links a { padding: 13px 16px; border-radius: 8px; display: flex; flex-direction: column; }
+.megamenu .mm-links a:hover { background: #26282B; }
+.megamenu .mm-links a .dtitle { color: var(--paper); font-weight: 600; font-size: 14px; font-family: var(--display); }
+.megamenu .mm-links a .ddesc { color: var(--graphite-light); font-size: 12px; margin-top: 3px; }
+.megamenu .mm-promo {
+  background: linear-gradient(145deg, #26282B 0%, #1D1F21 100%); border: 1px solid #303234;
+  border-radius: 14px; padding: 26px; display: flex; flex-direction: column; justify-content: flex-end;
+  min-height: 200px; position: relative; overflow: hidden;
+}
+.megamenu .mm-promo::after {
+  content: ''; position: absolute; right: -34px; top: -34px; width: 150px; height: 150px;
+  background: var(--volt); opacity: 0.12; border-radius: 50%;
+}
+.megamenu .mm-promo .mm-label { font-family: var(--mono); font-size: 10px; color: var(--volt); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+.megamenu .mm-promo h4 { font-family: var(--display); font-size: 19px; color: var(--paper); margin-bottom: 16px; line-height: 1.25; }
+/* Nav links and CTA render immediately alongside the logo — no staggered reveal. */
+.megamenu .mm-promo a.mm-cta { align-self: flex-start; background: var(--volt); color: var(--ink); font-weight: 600; font-size: 13px; padding: 10px 18px; border-radius: 7px; }
+
+@media (max-width: 900px) {
+  .megamenu { position: static; display: none; }
+}
+
+.ab-hero { padding: 96px 0 80px; }
+.ab-hero .mono-tag { color: var(--volt-deep); }
+.ab-hero h1 { font-size: 48px; margin: 16px 0 20px; max-width: 720px; }
+.ab-hero p { font-size: 17px; color: var(--slate); max-width: 560px; }
+
+.voltcut { height: 90px; background: var(--ink); clip-path: polygon(0 0, 100% 0, 100% 58%, 52% 100%, 0 76%); margin-top: -1px; }
+
+.mission-section { background: var(--ink); color: var(--paper); padding: 24px 0 90px; }
+.mission-section .mono-tag { color: var(--volt); }
+.mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 40px; }
+.mission-grid h2 { font-size: 28px; margin-bottom: 14px; color: var(--paper); }
+.mission-grid p { color: var(--graphite-light); font-size: 15px; }
+
+.symbol-section { padding: 90px 0; }
+.symbol-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 56px; align-items: center; }
+.symbol-mark { display: flex; justify-content: center; }
+.symbol-mark svg { width: 140px; height: 130px; }
+.symbol-mark svg rect, .symbol-mark svg path { transform-box: fill-box; transform-origin: center; opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .symbol-mark.in-view svg rect:nth-of-type(1) { animation: ampza-panel-left 1s cubic-bezier(0.22,1,0.36,1) both; }
+  .symbol-mark.in-view svg rect:nth-of-type(2) { animation: ampza-panel-right 1s cubic-bezier(0.22,1,0.36,1) both; }
+  .symbol-mark.in-view svg path { animation: ampza-bolt-electric-strike 1.5s linear 0.7s both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .symbol-mark svg rect, .symbol-mark svg path { opacity: 1; }
+}
+.symbol-mark:hover svg path { animation: ampza-bolt-flicker 2.4s linear infinite; }
+.symbol-grid .mono-tag { color: var(--volt-deep); }
+.symbol-grid h2 { font-size: 28px; margin: 14px 0 16px; }
+.symbol-grid p { font-size: 15px; color: var(--slate); margin-bottom: 12px; max-width: 480px; }
+
+.values-section { padding: 96px 0; }
+.values-section .seclabel { margin-bottom: 48px; }
+.values-section .mono-tag { color: var(--volt-deep); }
+.values-section h2 { font-size: 32px; margin: 12px 0; }
+.values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.value-card { border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+.value-card .n { font-family: var(--mono); font-size: 12px; color: var(--volt-deep); margin-bottom: 18px; }
+.value-card h3 { font-size: 17px; margin-bottom: 8px; }
+.value-card p { font-size: 13.5px; color: var(--slate); }
+
+.story-section { background: var(--paper-dim); padding: 96px 0; }
+.story-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 56px; align-items: center; }
+.story-grid .mono-tag { color: var(--volt-deep); }
+.story-grid h2 { font-size: 30px; margin: 14px 0 16px; }
+.story-grid p { font-size: 15px; color: var(--slate); margin-bottom: 14px; }
+.timeline { display: flex; flex-direction: column; }
+.tl-item { display: grid; grid-template-columns: 90px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); }
+.tl-item:first-child { border-top: none; }
+.tl-item .when { font-family: var(--mono); font-size: 11.5px; color: var(--volt-deep); }
+.tl-item h4 { font-size: 14.5px; margin-bottom: 4px; }
+.tl-item p { font-size: 13px; color: var(--slate); }
+
+.contact-section { padding: 96px 0; }
+.investors-section { background: var(--paper-dim); padding: 90px 0; }
+.investors-section .mono-tag { color: var(--volt-deep); }
+.investors-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; margin-top: 32px; }
+.investors-grid h2 { font-size: 28px; margin-bottom: 14px; }
+.investors-grid p { font-size: 15px; color: var(--slate); margin-bottom: 14px; max-width: 480px; }
+.inv-panel { background: var(--ink); color: var(--paper); border-radius: 14px; padding: 28px; }
+.inv-panel .row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid #303234; font-size: 13.5px; }
+.inv-panel .row:first-child { border-top: none; }
+.inv-panel .row .k { font-family: var(--mono); font-size: 10.5px; color: var(--graphite-light); text-transform: uppercase; }
+.inv-panel .row .v { font-weight: 500; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.contact-card { border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+.contact-card .mono-tag { color: var(--volt-deep); display:block; margin-bottom: 14px; }
+.contact-card h3 { font-size: 17px; margin-bottom: 8px; }
+.contact-card p { font-size: 13.5px; color: var(--slate); margin-bottom: 16px; }
+.contact-card a.link { font-size: 13.5px; font-weight: 600; color: var(--ink); border-bottom: 1.5px solid var(--volt); padding-bottom: 2px; }
+
+footer { padding: 44px 0; border-top: 1px solid var(--line); }
+.footer-bottom { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--graphite); }
+
+@media (max-width: 900px) {
+  .mission-grid, .values-grid, .story-grid, .contact-grid, .symbol-grid { grid-template-columns: 1fr; }
+  .navlinks { display: none; }
+  .ab-hero h1 { font-size: 32px; }
+}
+.rel-section { padding: 24px 0 96px; }
+.rel-section .mono-tag { color: var(--volt-deep); }
+.rel-section h2 { font-size: 32px; margin: 12px 0 12px; }
+.rel-lead { font-size: 15px; color: var(--slate); max-width: 620px; margin-bottom: 32px; }
+.rel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.rel-card { background: var(--ink); color: var(--paper); border-radius: 14px; padding: 28px; }
+.rel-card .big { font-family: var(--display); font-weight: 700; font-size: 34px; color: var(--volt); margin-bottom: 8px; }
+.rel-card .lbl { font-size: 13px; color: var(--graphite-light); }
+.rel-note { font-size: 13px; color: var(--slate); max-width: 720px; margin-top: 24px; }
+.tl-rule { margin-top: 12px; padding: 16px 18px; background: var(--paper-dim); border-left: 3px solid var(--volt); border-radius: 8px; font-size: 13px; color: var(--ink); }
+@media (max-width: 860px) { .rel-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ===== Shared: footer, TBC markers, page furniture (added for gateway/go-live pages) ===== */
+.site-footer { background: var(--ink); color: var(--graphite-light); padding: 64px 0 28px; margin-top: 0; }
+.site-footer .sf-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr 1.1fr; gap: 36px; }
+.site-footer .sf-brand .logo-mark { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.site-footer .sf-brand .word { font-family: var(--display); font-weight:700; font-size:19px; color: var(--paper); }
+.site-footer .sf-desc { font-size: 13px; color: var(--graphite-light); max-width: 300px; margin-bottom: 18px; }
+.site-footer .sf-contact { font-size: 12.5px; line-height: 1.7; color: var(--graphite-light); }
+.site-footer .sf-contact a { color: var(--paper); }
+.site-footer h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--volt); margin-bottom: 14px; font-weight: 500; }
+.site-footer .sf-col a { display:block; font-size: 13.5px; color: var(--graphite-light); padding: 4px 0; }
+.site-footer .sf-col a:hover { color: var(--volt); }
+.site-footer .sf-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid #34373B; display:flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--graphite); }
+.site-footer .sf-bottom a { color: var(--graphite-light); margin-left: 18px; }
+.site-footer .sf-bottom a:hover { color: var(--volt); }
+@media (max-width: 960px) { .site-footer .sf-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .site-footer .sf-grid { grid-template-columns: 1fr; } .site-footer .sf-bottom a:first-child { margin-left:0; } }
+/* TBC marker: highlights placeholder content the team must replace before launch */
+.tbc { background: rgba(245,217,73,0.35); border-bottom: 1.5px dashed var(--volt-deep); padding: 0 3px; border-radius: 3px; font-style: normal; }
+
+/* Buttons for the new forms/CTAs (scoped so existing page buttons are untouched) */
+.biz-hero .btn-primary, #partner-enquiry .btn-primary, .pg-hero .btn-primary, .sec .btn-primary, .btn-row .btn-primary, .ef .btn-primary, .callout .btn-primary { background: var(--volt); color: var(--ink); font-weight: 600; font-size: 14px; padding: 14px 24px; border-radius: 8px; display: inline-block; }
+.biz-hero .btn-primary:hover, #partner-enquiry .btn-primary:hover, .sec .btn-primary:hover, .ef .btn-primary:hover { background: var(--volt-deep); }
+
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="Ampza_Homepage_Mockup.html" class="logo-mark logo-anim">
+      <svg width="30" height="30" viewBox="10 10 70 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="16" y="14" width="26" height="62" rx="7" fill="#8E9196"/>
+        <rect x="48" y="14" width="26" height="62" rx="7" fill="#F5D949"/>
+        <path d="M49 16 L33 46 H43 L40 74 L60 43 H49 Z" fill="#1D1F21"/>
+      </svg>
+      <span class="word">Ampza</span>
+    </a>
+    <div class="navlinks">
+      <div class="navitem has-mega">
+        <a href="Ampza_Charging_Page_Mockup.html">Charging</a>
+        <div class="megamenu">
+          <div class="mm-inner">
+            <div class="mm-links">
+              <a href="Ampza_Charging_Page_Mockup.html#app"><span class="dtitle">The App</span><span class="ddesc">Find, charge, and track sessions</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#howto"><span class="dtitle">How to Charge</span><span class="ddesc">Step-by-step at any station</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#autocharge"><span class="dtitle">Auto Charge</span><span class="ddesc">Plug in and charging starts itself</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#connectors"><span class="dtitle">Connector Types</span><span class="ddesc">What hardware we support</span></a>
+              <a href="Ampza_Charging_Page_Mockup.html#savings"><span class="dtitle">Savings Calculator</span><span class="ddesc">Petrol vs. EV cost comparison</span></a>
+              <a href="Ampza_FAQs_Page_Mockup.html"><span class="dtitle">FAQs &amp; Support</span><span class="ddesc">Payments, refunds, if a charge fails</span></a>
+            </div>
+            <div class="mm-promo">
+              <span class="mm-label">New here?</span>
+              <h4>Get charging instructions, start to finish.</h4>
+              <a href="Ampza_Charging_Page_Mockup.html#howto" class="mm-cta">Show me →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navitem has-mega">
+        <a href="Ampza_Business_Page_Mockup.html">Business</a>
+        <div class="megamenu">
+          <div class="mm-inner">
+            <div class="mm-links">
+              <a href="Ampza_Business_Page_Mockup.html#host"><span class="dtitle">Host a Station</span><span class="ddesc">Bring charging to your property</span></a>
+              <a href="Ampza_Business_Page_Mockup.html#franchise"><span class="dtitle">Franchise With Us</span><span class="ddesc">Run an Ampza charging point</span></a>
+              <a href="Ampza_Business_Page_Mockup.html#byoc"><span class="dtitle">Bring Your Own Charger</span><span class="ddesc">List existing hardware on our app</span></a>
+              <a href="Ampza_Business_Page_Mockup.html#fleet"><span class="dtitle">Fleet & Corporate</span><span class="ddesc">Charging plans for company vehicles</span></a>
+            </div>
+            <div class="mm-promo">
+              <span class="mm-label">Have a property?</span>
+              <h4>Let's put an Ampza charger on it.</h4>
+              <a href="Ampza_Business_Page_Mockup.html#host" class="mm-cta">Start hosting →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navitem"><a href="Ampza_Pricing_Page_Mockup.html">Pricing</a></div>
+      <div class="navitem has-mega active">
+        <a href="Ampza_About_Page_Mockup.html">About</a>
+        <div class="megamenu">
+          <div class="mm-inner">
+            <div class="mm-links">
+              <a href="Ampza_About_Page_Mockup.html#mission"><span class="dtitle">Mission & Vision</span><span class="ddesc">Why we're building Ampza</span></a>
+              <a href="Ampza_About_Page_Mockup.html#values"><span class="dtitle">Values</span><span class="ddesc">What we build around</span></a>
+              <a href="Ampza_About_Page_Mockup.html#story"><span class="dtitle">Our Story</span><span class="ddesc">Early days, on purpose</span></a>
+              <a href="Ampza_About_Page_Mockup.html#investors"><span class="dtitle">For Investors</span><span class="ddesc">Where things stand today</span></a>
+              <a href="Ampza_Contact_Page_Mockup.html"><span class="dtitle">Contact</span><span class="ddesc">Support, partnerships, grievance form</span></a>
+            </div>
+            <div class="mm-promo">
+              <span class="mm-label">Our mission</span>
+              <h4>Charging, for people. Not just for cars.</h4>
+              <a href="Ampza_About_Page_Mockup.html#mission" class="mm-cta">Read our story →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="Ampza_Homepage_Mockup.html#waitlist" class="nav-cta">Join waitlist</a>
+  </nav>
+</header>
+
+<section class="ab-hero wrap">
+  <span class="mono-tag">// About</span>
+  <h1>Charging, for people. Not just for cars.</h1>
+  <p>It's not vehicles that are going electric. It's people. Drivers, commuters, families, small business owners. Ampza exists to make that shift a little easier for the person behind the wheel, not just the machine in front of them.</p>
+</section>
+
+<div class="voltcut"></div>
+
+<div class="mission-section" id="mission">
+  <div class="wrap">
+    <span class="mono-tag">// Mission & Vision</span>
+    <div class="mission-grid">
+      <div>
+        <h2>Mission</h2>
+        <p>Predictable charging, every time. You know where the nearest station is, what it costs, and how long it takes, before you leave home. Built for the person driving, not just the vehicle.</p>
+      </div>
+      <div>
+        <h2>Vision</h2>
+        <p>Reliability first, scale second. A small, carefully tested network today, earning trust one station at a time, not chasing pins on a map.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OUR SYMBOL -->
+<section class="symbol-section wrap">
+  <div class="symbol-grid">
+    <div class="symbol-mark">
+      <svg viewBox="10 10 70 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="16" y="14" width="26" height="62" rx="7" fill="#8E9196"/>
+        <rect x="48" y="14" width="26" height="62" rx="7" fill="#F5D949"/>
+        <path d="M49 16 L33 46 H43 L40 74 L60 43 H49 Z" fill="#1D1F21"/>
+      </svg>
+    </div>
+    <div>
+      <span class="mono-tag">// Our Symbol</span>
+      <h2>The moment of connection</h2>
+      <p>Two panels, and a bolt striking between them. The grey is everything ordinary about a journey: the parking spot, the wait, the routine. The yellow is what changes the moment you plug in.</p>
+      <p>The bolt doesn't sit quietly on one side. It cuts across both, because that's what a good charging network should feel like, not a separate errand, just a beat inside a normal day.</p>
+    </div>
+  </div>
+</section>
+
+<section class="values-section wrap" id="values">
+  <span class="mono-tag">// Values</span>
+  <h2>What we build around</h2>
+  <div class="values-grid" style="margin-top:32px;">
+    <div class="value-card">
+      <div class="n">01</div>
+      <h3>Reliability first</h3>
+      <p>A station on the app should be a station that works, every time. We'd rather launch slower than list something unreliable.</p>
+    </div>
+    <div class="value-card">
+      <div class="n">02</div>
+      <h3>Transparent pricing</h3>
+      <p>No hidden fees, no surprise charges. What you see before you plug in is what you pay.</p>
+    </div>
+    <div class="value-card">
+      <div class="n">03</div>
+      <h3>Built for everyone</h3>
+      <p>From daily commuters to long-distance drivers, the app should work the same way for every kind of trip.</p>
+    </div>
+  </div>
+</section>
+
+<section class="rel-section wrap" id="reliability">
+  <span class="mono-tag">// Reliability by design</span>
+  <h2>Making "available" mean "working".</h2>
+  <p class="rel-lead">Installed is not the same as operational. These are the standards we propose to hold ourselves to. They are targets, not a claim of current performance or a mandated standard.</p>
+  <div class="rel-grid">
+    <div class="rel-card"><div class="big">≥97%</div><div class="lbl">monthly operational uptime per connector (proposed)</div></div>
+    <div class="rel-card"><div class="big">≤5 min</div><div class="lbl">to detect a detectable fault</div></div>
+    <div class="rel-card"><div class="big">≤15 min</div><div class="lbl">to acknowledge a critical fault</div></div>
+    <div class="rel-card"><div class="big">100%</div><div class="lbl">monthly reporting coverage</div></div>
+  </div>
+  <p class="rel-note">We will monitor live status, OCPP telemetry where supported, alerts and escalation, and a monthly dashboard of uptime, downtime, successful-session rate, recurring faults and mean time to repair.</p>
+</section>
+
+<div class="story-section" id="story">
+  <div class="wrap story-grid">
+    <div>
+      <span class="mono-tag">// Where we are</span>
+      <h2>Early days, on purpose</h2>
+      <p>We're not pretending to be a mature network yet. Right now, that means a small founding team, a handful of partner locations being finalized, and a lot of direct conversations with our first users and hosts.</p>
+      <p>That's deliberate. We'd rather get the basics right with a small network than rush a large one that doesn't work.</p>
+      <p>We're starting in Tamil Nadu and Kerala, with broader South India after the model is proven.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="when">PHASE 1<br>MONTHS 0–6</div><div><h4>Build the platform</h4><p>App built and tested, first host sites signed, hardware supplier chosen and tariff and connection cost confirmed per site. Evidence: signed site agreements, supplier quote, working app demo.</p></div></div>
+      <div class="tl-item"><div class="when">PHASE 2<br>MONTHS 6–12</div><div><h4>First stations live</h4><p>A small, tested set of locations, with uptime tracked on every station. Evidence: monthly uptime and sessions report for each station.</p></div></div>
+      <div class="tl-item"><div class="when">PHASE 3<br>MONTHS 12–24</div><div><h4>Expand city by city</h4><p>Usage compared with the 8-car target, payback recalculated from real costs, partner terms tested. Evidence: station-level economics shared with partners and investors.</p></div></div>
+      <div class="tl-rule">No new city until existing stations meet the targets we set. Timings are proposed and depend on funding and site approvals.</div>
+    </div>
+  </div>
+</div>
+
+<div class="investors-section" id="investors">
+  <div class="wrap">
+    <span class="mono-tag">// For Investors</span>
+    <div class="investors-grid">
+      <div>
+        <h2>We're early, and that's the honest pitch.</h2>
+        <p>Ampza is a new charging network, currently building its platform and its first station partnerships. We don't have network performance data to show yet, so we'd rather show you what we know and what we don't than a deck full of projections. Strategic investors, property owners, franchise partners, charger operators and fleet businesses are all welcome to reach out directly. This is an early-stage business overview, not an offer of securities.</p>
+        <a href="#contact-section" class="link" style="font-size:13.5px; font-weight:600; color:var(--ink); border-bottom:1.5px solid var(--volt); padding-bottom:2px;">Get in touch →</a>
+      </div>
+      <div class="inv-panel">
+        <div class="row"><div class="k">Stage</div><div class="v">Pre-launch, founding team</div></div>
+        <div class="row"><div class="k">Who we want to hear from</div><div class="v">Strategic investors and partners</div></div>
+        <div class="row"><div class="k">What exists today</div><div class="v">Brand and website design, app concept and product plan, unit-economics model, partner programme structure</div></div>
+        <div class="row"><div class="k">What we will prove next</div><div class="v">Station uptime, real utilisation per site, true operating cost per kWh, repeatable host and franchise terms</div></div>
+        <div class="row"><div class="k">What we can share</div><div class="v">Our model, market view, unit-economics assumptions and roadmap, on a call or in our investor and partner overview</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="contact-section wrap" id="contact-section">
+  <span class="mono-tag">// Get in touch</span>
+  <h2 style="margin:14px 0 32px; font-size:30px;">Contact</h2>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <span class="mono-tag">General enquiries</span>
+      <h3>Questions about Ampza</h3>
+      <p>For press, partnerships, or general questions about what we're building.</p>
+      <a href="mailto:hello@ampza.in" class="link">hello@ampza.in</a>
+      <p class="contact-lines" style="margin:16px 0 0;">Phone: <a href="tel:+919842910644" class="link">+91-9842910644</a><br>WhatsApp: <a href="https://wa.me/919842910644" class="link">Chat with us</a><br>No. 10/44-2, Kovithanvilai Road, Erumbukadu Post, Nagercoil – 629004</p>
+      <p style="margin:14px 0 0;"><a href="Ampza_Contact_Page_Mockup.html" class="link">All contact details, support and grievance form →</a></p>
+    </div>
+    <div class="contact-card">
+      <span class="mono-tag">Business & partnerships</span>
+      <h3>Host, franchise, or fleet enquiries</h3>
+      <p>See the Business page for details, or reach out directly.</p>
+      <a href="Ampza_Business_Page_Mockup.html" class="link">Go to Business page →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="sf-grid">
+      <div class="sf-brand">
+        <a href="Ampza_Homepage_Mockup.html" class="logo-mark"><svg width="30" height="30" viewBox="10 10 70 70" xmlns="http://www.w3.org/2000/svg">
+          <rect x="16" y="14" width="26" height="62" rx="7" fill="#8E9196"/>
+          <rect x="48" y="14" width="26" height="62" rx="7" fill="#F5D949"/>
+          <path d="M49 16 L33 46 H43 L40 74 L60 43 H49 Z" fill="#1D1F21"/>
+        </svg><span class="word">Ampza</span></a>
+        <p class="sf-desc">Charging, for people. Not just for cars. EV charging for Tamil Nadu and Kerala, built on reliability.</p>
+        <div class="sf-contact">
+          <strong style="color:var(--paper);">Ampza</strong><br>
+          No. 10/44-2, Kovithanvilai Road, Erumbukadu Post, Nagercoil – 629004, Tamil Nadu, India<br>
+          Phone: <a href="tel:+919842910644">+91-9842910644</a><br>
+          Support: <a href="mailto:support@ampza.in">support@ampza.in</a><br>
+          General &amp; business: <a href="mailto:hello@ampza.in">hello@ampza.in</a>
+        </div>
+      </div>
+      <div class="sf-col">
+        <h4>Charging</h4>
+        <a href="Ampza_Charging_Page_Mockup.html#app">The app</a>
+        <a href="Ampza_Charging_Page_Mockup.html#howto">How to charge</a>
+        <a href="Ampza_Pricing_Page_Mockup.html">Pricing</a>
+        <a href="Ampza_FAQs_Page_Mockup.html">FAQs</a>
+      </div>
+      <div class="sf-col">
+        <h4>Business</h4>
+        <a href="Ampza_Business_Page_Mockup.html#partner-enquiry">Partner with us</a>
+        <a href="Ampza_Business_Page_Mockup.html#host">Host a station</a>
+        <a href="Ampza_Business_Page_Mockup.html#franchise">Franchise</a>
+        <a href="Ampza_Business_Page_Mockup.html#byoc">Bring your own charger</a>
+        <a href="Ampza_Business_Page_Mockup.html#fleet">Fleet &amp; corporate</a>
+      </div>
+      <div class="sf-col">
+        <h4>Company</h4>
+        <a href="Ampza_About_Page_Mockup.html">About us</a>
+        <a href="Ampza_Contact_Page_Mockup.html">Contact us</a>
+        <a href="Ampza_Contact_Page_Mockup.html#support">Support</a>
+        <a href="Ampza_Contact_Page_Mockup.html#grievance">Grievance form</a>
+      </div>
+      <div class="sf-col">
+        <h4>Legal</h4>
+        <a href="Ampza_Privacy_Policy_Mockup.html">Privacy Policy</a>
+        <a href="Ampza_Terms_and_Conditions_Mockup.html">Terms &amp; Conditions</a>
+        <a href="Ampza_Cancellation_and_Refund_Policy_Mockup.html">Cancellation &amp; Refund Policy</a>
+        <a href="Ampza_Cookie_Policy_Mockup.html">Cookie Policy</a>
+      </div>
+    </div>
+    <div class="sf-bottom">
+      <span>© 2026 Ampza. All rights reserved.</span>
+      <span><a href="Ampza_Privacy_Policy_Mockup.html">Privacy Policy</a><a href="Ampza_Terms_and_Conditions_Mockup.html">Terms &amp; Conditions</a><a href="Ampza_Cancellation_and_Refund_Policy_Mockup.html">Cancellation &amp; Refund Policy</a><a href="Ampza_Cookie_Policy_Mockup.html">Cookies</a><a href="Ampza_Contact_Page_Mockup.html">Contact</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Symbol logo scroll animation: play the strike sequence when it scrolls into view.
+  window.addEventListener('DOMContentLoaded', function() {
+    // Symbol logo: play the same strike animation when it scrolls into view.
+    var symbolMark = document.querySelector('.symbol-mark');
+    if (symbolMark && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      observer.observe(symbolMark);
+    } else if (symbolMark) {
+      symbolMark.classList.add('in-view');
+    }
+  });
+</script>
+</body>
+</html>

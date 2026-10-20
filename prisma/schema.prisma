@@ -14,6 +14,9 @@ model WebsiteSubmission {
   normalizedEmail String?  @map("normalized_email") @db.VarChar(254)
   payload         Json     @default("{}")
   consent         Boolean  @default(false)
+  notificationStatus String @default("not_required") @map("notification_status") @db.VarChar(20)
+  notificationError  String? @map("notification_error") @db.VarChar(120)
+  notifiedAt      DateTime? @map("notified_at") @db.Timestamptz(6)
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@unique([kind, normalizedEmail], map: "website_waitlist_email_unique")

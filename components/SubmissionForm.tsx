@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import Link from 'next/link';
 
 type Field = { name: string; label: string; type?: string; required?: boolean; options?: string[]; wide?: boolean };
 type Props = { kind: 'waitlist' | 'contact' | 'partner' | 'grievance'; fields: Field[]; submitLabel: string; intro?: string };
@@ -38,7 +39,7 @@ export default function SubmissionForm({ kind, fields, submitLabel, intro }: Pro
       </label>)}
     </div>
     <label className="honeypot" aria-hidden="true">Website <input name="website" tabIndex={-1} autoComplete="off" /></label>
-    <label className="consent-line"><input type="checkbox" name="consent" required /> <span>I agree to the <a href="/privacy-policy">Privacy Policy</a> and consent to Ampza using these details to respond.</span></label>
+    <label className="consent-line"><input type="checkbox" name="consent" required /> <span>I agree to the <Link href="/privacy-policy">Privacy Policy</Link> and consent to Ampza using these details to respond.</span></label>
     <button className="button button-dark" type="submit" disabled={busy}>{busy ? 'Sending…' : submitLabel} <span>↗</span></button>
     {notice && <p role="status" className="form-notice">{notice}</p>}
   </form>;

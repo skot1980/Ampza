@@ -1,9 +1,0 @@
-import ContentPage from '@/components/ContentPage';
-import SubmissionForm from '@/components/SubmissionForm';
-import type { Metadata } from 'next';
-export const metadata: Metadata = { title: 'Contact Ampza' };
-export default function ContactPage(){return <ContentPage eyebrow="WE’RE HERE TO HELP" title="Talk to the Ampza team." intro="For charging, payments or account questions, or to discuss a host, franchise, charger, fleet or investor partnership." sections={[
- {title:'Write to us',id:'write-to-us',paragraphs:['Email hello@ampza.in or use the form below. For support, you can also call +91 98429 10644.'],children:<SubmissionForm kind="contact" submitLabel="Send message" fields={[{name:'name',label:'Your name',required:true},{name:'phone',label:'Phone number',type:'tel'},{name:'email',label:'Email',type:'email',required:true},{name:'interest',label:'Topic',options:['Charging support','Payments or refund','Account or personal data','Partnership','Other'],required:true,wide:true},{name:'message',label:'Message',required:true,wide:true}]}/>},
- {title:'Submit a grievance',id:'grievance',paragraphs:['If you have a complaint, include enough detail for us to understand and review what happened.'],children:<SubmissionForm kind="grievance" submitLabel="Submit grievance" fields={[{name:'name',label:'Your name',required:true},{name:'phone',label:'Registered mobile number',type:'tel'},{name:'email',label:'Email',type:'email',required:true},{name:'transactionId',label:'Session or transaction ID (if any)',wide:true},{name:'category',label:'What is it about?',options:['Charging session','Payment or refund','Station issue','Account or personal data','Other'],required:true,wide:true},{name:'message',label:'Tell us what happened',required:true,wide:true}]}/>},
- {title:'Office address',paragraphs:['Ampza','No. 10/44-2, Kovithanvilai Road, Erumbukadu Post, Nagercoil – 629004, Tamil Nadu, India','Email: hello@ampza.in','Phone: +91 98429 10644']},
-]}/>}
